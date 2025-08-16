@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TodoApp.Models
 {
-    public class Item
+    public class TodoItem
     {
         public int Id { get; set; }
 
@@ -12,7 +12,7 @@ namespace TodoApp.Models
 
         [Column(TypeName = "timestamp")]
 
-        public DateTime TimeAdded { get; set; } = DateTime.Now;
+        public DateTime DateAdded { get; set; } = DateTime.Now;
 
         public User User { get; set; }
     }

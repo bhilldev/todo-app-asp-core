@@ -10,6 +10,6 @@ namespace TodoApp.Models
 
         public string password { get; set; }
 
-        public ICollection<Item> Items { get; } = new List<Item>();
+        public ICollection<TodoItem> Items { get; } = new List<TodoItem>();
     }
 }

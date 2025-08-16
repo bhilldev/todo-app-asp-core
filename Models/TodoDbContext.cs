@@ -6,7 +6,7 @@ namespace TodoApp.Models
     {
         public TodoDbContext(DbContextOptions<TodoDbContext> options) : base(options) { }
 
-        public DbSet<Item> Items { get; set; }
+        public DbSet<TodoItem> Items { get; set; }
         public DbSet<User> Users { get; set; }
 
     }
