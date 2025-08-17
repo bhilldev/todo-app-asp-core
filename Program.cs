@@ -1,7 +1,17 @@
+using TodoApp.Models;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+var configuration = builder.Configuration;
+var username = configuration["postgres-username"];
+
+var password = configuration["postgres-password"];
+
+builder.Services.AddDbContext<TodoDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection").Replace("{USERNAME}", username)));
 
 var app = builder.Build();
 

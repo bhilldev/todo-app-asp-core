@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("todo-app-asp-core")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b534b252370eb26e8ec281bb375718730b1fb510")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+12333112052bbc18afd409775b6b8096df05a6b7")]
 [assembly: System.Reflection.AssemblyProductAttribute("todo-app-asp-core")]
 [assembly: System.Reflection.AssemblyTitleAttribute("todo-app-asp-core")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
