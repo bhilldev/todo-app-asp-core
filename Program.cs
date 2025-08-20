@@ -11,7 +11,9 @@ var username = configuration["postgres-username"];
 var password = configuration["postgres-password"];
 
 builder.Services.AddDbContext<TodoDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection").Replace("{USERNAME}", username)));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")
+      .Replace("{USERNAME}", username)
+      .Replace("{PASSWORD}", password)));
 
 var app = builder.Build();
 

@@ -195,3 +195,5 @@
 /home/brandon/Documents/Developer/Projects/todo-app-asp-core/obj/Debug/net9.0/todo-app-asp-core.pdb
 /home/brandon/Documents/Developer/Projects/todo-app-asp-core/obj/Debug/net9.0/todo-app-asp-core.genruntimeconfig.cache
 /home/brandon/Documents/Developer/Projects/todo-app-asp-core/obj/Debug/net9.0/ref/todo-app-asp-core.dll
+/home/brandon/Documents/Developer/Projects/todo-app-asp-core/bin/Debug/net9.0/Microsoft.EntityFrameworkCore.Relational.Design.dll
+/home/brandon/Documents/Developer/Projects/todo-app-asp-core/bin/Debug/net9.0/Npgsql.EntityFrameworkCore.PostgreSQL.Design.dll

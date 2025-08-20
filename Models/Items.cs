@@ -6,6 +6,8 @@ namespace TodoApp.Models
     {
         public int Id { get; set; }
 
+        public int UserId { get; set; }
+
         public string Entry { get; set; }
 
         public bool isCompleted { get; set; }
@@ -14,6 +16,6 @@ namespace TodoApp.Models
 
         public DateTime DateAdded { get; set; } = DateTime.Now;
 
-        public User User { get; set; }
+        public User User { get; set; } = new();
     }
 }
