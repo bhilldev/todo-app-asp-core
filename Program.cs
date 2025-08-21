@@ -1,4 +1,4 @@
-using TodoApp.Models;
+using todo_app_asp_core.Models;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

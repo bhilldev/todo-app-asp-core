@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="../buildMultiTargeting/todo-app-asp-core.props" />
-</Project>

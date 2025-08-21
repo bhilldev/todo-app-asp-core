@@ -1,6 +1,6 @@
 //using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using TodoApp.Models;
+using todo_app_asp_core.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace todo_app_asp_core.Controllers
@@ -33,7 +33,7 @@ namespace todo_app_asp_core.Controllers
         [HttpPost]
         public async Task<IActionResult> PostItem(TodoItem item)
         {
-            _context.Items.Add(item);
+             _context.Items.Add(item);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetItem), new { id = item.Id }, item);
@@ -58,7 +58,7 @@ namespace todo_app_asp_core.Controllers
             }
 
             return NoContent();
-        }
+        }        
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteItems(int id)
         {

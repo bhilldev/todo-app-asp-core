@@ -1,12 +1,10 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace TodoApp.Models
+namespace todo_app_asp_core.Models
 {
     public class TodoItem
     {
         public int Id { get; set; }
-
-        public int UserId { get; set; }
 
         public string Entry { get; set; }
 
@@ -15,6 +13,8 @@ namespace TodoApp.Models
         [Column(TypeName = "timestamp")]
 
         public DateTime DateAdded { get; set; } = DateTime.Now;
+
+        public int UserId { get; set; }
 
         public User User { get; set; } = new();
     }

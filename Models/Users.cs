@@ -1,4 +1,4 @@
-namespace TodoApp.Models
+namespace todo_app_asp_core.Models
 {
     public class User
     {
@@ -13,3 +13,4 @@ namespace TodoApp.Models
         public ICollection<TodoItem> Items { get; } = new List<TodoItem>();
     }
 }
+
