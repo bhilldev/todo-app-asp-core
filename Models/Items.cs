@@ -16,6 +16,6 @@ namespace todo_app_asp_core.Models
 
         public int UserId { get; set; }
 
-        public User User { get; set; } = new();
+        public User User { get; set; }
     }
 }

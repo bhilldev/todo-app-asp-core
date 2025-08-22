@@ -15,12 +15,30 @@ namespace todo_app_asp_core.Controllers
             _logger = logger;
             _context = context;
         }
+        //Get Items
         [HttpGet("TodoItem/GetItem")]
         public async Task<ActionResult<IEnumerable<TodoItem>>> GetItem()
         {
             return await _context.Items.OrderBy(p => p.DateAdded).ToListAsync();
         }
         [HttpGet("TodoItem/GetItem/{id}")]
+        public async Task<ActionResult<User>> GetUser(int id)
+        {
+            var user = await _context.Users.FindAsync(id);
+
+            if (user == null)
+                return NotFound();
+
+            return user;
+        }
+
+        //Get Users-----
+        [HttpGet("GetUser")]
+        public async Task<ActionResult<IEnumerable<User>>> GetUser()
+        {
+            return await _context.Users.ToListAsync();
+        }
+        [HttpGet("GetUser/{id}")]
         public async Task<ActionResult<TodoItem>> GetItem(int id)
         {
             var item = await _context.Items.FindAsync(id);
@@ -33,13 +51,20 @@ namespace todo_app_asp_core.Controllers
         [HttpPost]
         public async Task<IActionResult> PostItem(TodoItem item)
         {
-             _context.Items.Add(item);
+            _context.Items.Add(item);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetItem), new { id = item.Id }, item);
         }
+        public async Task<IActionResult> Post(User user)
+        {
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
+        }
         [HttpPut("{id}")]
-        public async Task<IActionResult> Putitem(int id, TodoItem item)
+        public async Task<IActionResult> PutItem(int id, TodoItem item)
         {
             if (id != item.Id)
                 return BadRequest();
@@ -58,7 +83,7 @@ namespace todo_app_asp_core.Controllers
             }
 
             return NoContent();
-        }        
+        }
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteItems(int id)
         {
