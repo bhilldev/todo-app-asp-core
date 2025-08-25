@@ -5,12 +5,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace todo_app_asp_core.Controllers
 {
-    public class HomeController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    public class TodoController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ILogger<TodoController> _logger;
         private readonly TodoDbContext _context;
 
-        public HomeController(ILogger<HomeController> logger, TodoDbContext context)
+        public TodoController(ILogger<TodoController> logger, TodoDbContext context)
         {
             _logger = logger;
             _context = context;
@@ -33,7 +35,7 @@ namespace todo_app_asp_core.Controllers
         }
 
         //Get Users-----
-        [HttpGet("GetUser")]
+        [HttpGet("User/GetUser")]
         public async Task<ActionResult<IEnumerable<User>>> GetUser()
         {
             return await _context.Users.ToListAsync();
@@ -49,21 +51,20 @@ namespace todo_app_asp_core.Controllers
             return item;
         }
         [HttpPost]
-        public async Task<IActionResult> PostItem(TodoItem item)
+        public async Task<ActionResult<TodoItem>> PostItem(TodoItem item)
         {
             _context.Items.Add(item);
             await _context.SaveChangesAsync();
-
             return CreatedAtAction(nameof(GetItem), new { id = item.Id }, item);
         }
-        public async Task<IActionResult> Post(User user)
+        public async Task<ActionResult<User>> PostUser(User user)
         {
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
         }
-        [HttpPut("{id}")]
+        [HttpPut("Todo/PutUser{id}")]
         public async Task<IActionResult> PutItem(int id, TodoItem item)
         {
             if (id != item.Id)

@@ -6,7 +6,7 @@ namespace todo_app_asp_core.Models
     {
         public int Id { get; set; }
 
-        public string Entry { get; set; }
+        public string Entry { get; set; } = string.Empty;
 
         public bool isCompleted { get; set; }
 
