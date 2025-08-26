@@ -9,100 +9,55 @@ namespace todo_app_asp_core.Controllers
     [ApiController]
     public class TodoController : Controller
     {
-        private readonly ILogger<TodoController> _logger;
         private readonly TodoDbContext _context;
 
-        public TodoController(ILogger<TodoController> logger, TodoDbContext context)
+        public TodoController(TodoDbContext context)
         {
-            _logger = logger;
             _context = context;
         }
-        //Get Items
-        [HttpGet("TodoItem/GetItem")]
-        public async Task<ActionResult<IEnumerable<TodoItem>>> GetItem()
-        {
-            return await _context.Items.OrderBy(p => p.DateAdded).ToListAsync();
-        }
-        [HttpGet("TodoItem/GetItem/{id}")]
-        public async Task<ActionResult<User>> GetUser(int id)
-        {
-            var user = await _context.Users.FindAsync(id);
 
-            if (user == null)
-                return NotFound();
-
-            return user;
+        // GET: Categories
+        public async Task<IActionResult> Index()
+        {
+            var categories = await _context.Users
+              .Include(c => c.Items)
+              .ToListAsync();
+            return View(categories);
         }
 
-        //Get Users-----
-        [HttpGet("User/GetUser")]
-        public async Task<ActionResult<IEnumerable<User>>> GetUser()
+        // GET: Categories/Details/5
+        public async Task<IActionResult> Details(int? id)
         {
-            return await _context.Users.ToListAsync();
+            if (id == null) return NotFound();
+
+            var category = await _context.Users
+                                         .Include(c => c.Items)
+                                         .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (category == null) return NotFound();
+
+            return View(category);
         }
-        [HttpGet("GetUser/{id}")]
-        public async Task<ActionResult<TodoItem>> GetItem(int id)
+
+        // Optional: Create a Product for a Category
+        public IActionResult CreateItem(int userId)
         {
-            var item = await _context.Items.FindAsync(id);
-
-            if (item == null)
-                return NotFound();
-
-            return item;
+            var item = new TodoItem { UserId = userId };
+            return View(item);
         }
+
         [HttpPost]
-        public async Task<IActionResult> PostItem(TodoItem item)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateItem(TodoItem item)
         {
-            _context.Items.Add(item);
-            await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetItem), new { id = item.Id }, item);
-        }
-        public async Task<ActionResult<User>> PostUser(User user)
-        {
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
-        }
-        [HttpPut("Todo/PutUser{id}")]
-        public async Task<IActionResult> PutItem(int id, TodoItem item)
-        {
-            if (id != item.Id)
-                return BadRequest();
-
-            _context.Entry(item).State = EntityState.Modified;
-
-            try
+            if (ModelState.IsValid)
             {
+                _context.Add(item);
                 await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Details), new { id = item.UserId });
             }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ItemExists(id))
-                    return NotFound();
-                throw;
-            }
-
-            return NoContent();
+            return View(item);
         }
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteItems(int id)
-        {
-            var item = await _context.Items.FindAsync(id);
-            if (item == null)
-                return NotFound();
-
-            _context.Items.Remove(item);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool ItemExists(int id)
-        {
-            return _context.Items.Any(e => e.Id == id);
-        }
-
 
         //public IActionResult Index()
         //{
@@ -119,5 +74,6 @@ namespace todo_app_asp_core.Controllers
         //{
         //    return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         //}
+
     }
 }
