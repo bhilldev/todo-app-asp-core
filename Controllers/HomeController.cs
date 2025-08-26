@@ -51,7 +51,7 @@ namespace todo_app_asp_core.Controllers
             return item;
         }
         [HttpPost]
-        public async Task<ActionResult<TodoItem>> PostItem(TodoItem item)
+        public async Task<IActionResult> PostItem(TodoItem item)
         {
             _context.Items.Add(item);
             await _context.SaveChangesAsync();
