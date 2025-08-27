@@ -1,79 +1,100 @@
 //using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using todo_app_asp_core.Models;
+using todo_app_asp_core.Dtos;
 using Microsoft.EntityFrameworkCore;
 
 namespace todo_app_asp_core.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class TodoController : Controller
     {
         private readonly TodoDbContext _context;
+        private readonly ILogger<TodoController> _logger;
 
-        public TodoController(TodoDbContext context)
+        public TodoController(TodoDbContext context, ILogger<TodoController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
-        // GET: Categories
-        public async Task<IActionResult> Index()
+        // GET: api/authors (with related books)
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<User>>> GetUser()
         {
-            var categories = await _context.Users
-              .Include(c => c.Items)
-              .ToListAsync();
-            return View(categories);
+            return await _context.Users
+                .Include(a => a.Items)
+                .ToListAsync();
         }
 
-        // GET: Categories/Details/5
-        public async Task<IActionResult> Details(int? id)
+        // GET: api/authors/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<User>> GetUser(int id)
         {
-            if (id == null) return NotFound();
+            var user = await _context.Users
+                .Include(a => a.Items)
+                .FirstOrDefaultAsync(a => a.Id == id);
 
-            var category = await _context.Users
-                                         .Include(c => c.Items)
-                                         .FirstOrDefaultAsync(m => m.Id == id);
+            if (user == null)
+                return NotFound();
 
-            if (category == null) return NotFound();
-
-            return View(category);
+            return user;
         }
-
-        // Optional: Create a Product for a Category
-        public IActionResult CreateItem(int userId)
+        [HttpGet("items/{id}")]
+        public async Task<ActionResult<TodoItem>> GetItem(int id)
         {
-            var item = new TodoItem { UserId = userId };
-            return View(item);
+            var item = await _context.Items.FindAsync(id);
+            if (item == null)
+                return NotFound();
+            return item;
         }
 
+        // POST: api/authors
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateItem(TodoItem item)
+        public async Task<ActionResult<User>> CreateUser(User user)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(item);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Details), new { id = item.UserId });
-            }
-            return View(item);
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+            return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
         }
 
-        //public IActionResult Index()
+        // POST: api/authors/5/books
+        //[HttpPost("{Id}/items")]
+        //public async Task<ActionResult<TodoItem>> AddItemToUser(int userId, TodoItem item)
         //{
-        //    return View();
-        //}
+        //    var user = await _context.Users.FindAsync(userId);
+        //    if (user == null)
+        //        return NotFound();
 
-        //public IActionResult Privacy()
-        //{
-        //    return View();
-        //}
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
+        //    item.UserId = userId;
+        //    _context.Items.Add(item);
+        //    await _context.SaveChangesAsync();
 
-        //[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        //public IActionResult Error()
-        //{
-        //    return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        //    return CreatedAtAction(nameof(GetItem), new { id = userId }, item);
         //}
+        [HttpPost("{userId}/items")]
+        public async Task<ActionResult<TodoItem>> AddItemToUser(int userId, TodoItemCreateDto dto)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+                return NotFound();
 
+            var item = new TodoItem
+            {
+                Entry = dto.Entry,
+                isCompleted = dto.isCompleted,
+                UserId = userId
+            };
+
+            _context.Items.Add(item);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetItem), new { id = item.Id }, item);
+        }
     }
 }

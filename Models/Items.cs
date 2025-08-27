@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace todo_app_asp_core.Models
 {
@@ -15,7 +16,7 @@ namespace todo_app_asp_core.Models
         public DateTime DateAdded { get; set; } = DateTime.Now;
 
         public int UserId { get; set; }
-
+        [JsonIgnore]
         public User User { get; set; }
     }
 }
