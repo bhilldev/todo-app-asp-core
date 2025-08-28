@@ -54,13 +54,13 @@ namespace todo_app_asp_core.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteItem(int id)
         {
-            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            //var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if (!int.TryParse(userIdClaim, out var userId))
-            {
-                return Unauthorized();
-            }
-
+            //if (!int.TryParse(userIdClaim, out var userId))
+            //{
+            //    return Unauthorized();
+            //}
+            var userId = 2;
             var item = await _context.Items
                 .FirstOrDefaultAsync(i => i.Id == id && i.UserId == userId);
 
@@ -74,8 +74,42 @@ namespace todo_app_asp_core.Controllers
 
             return NoContent();
         }
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateItem(int id, [FromBody] UpdateItemDto dto)
+        {
+            // Get logged-in user's ID
+            //   var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            //   if (!int.TryParse(userIdClaim, out var userId))
+            //   {
+            //       return Unauthorized();
+            //   }
 
-        // POST: api/authors
+
+            // WARNING... userId value is hardcoded for testing purposes. JWT is not set up yet.
+            // Above commented code can be uncommented when JWT is set up.
+            var userId = 2;
+            // Find the item by id and user
+            var item = await _context.Items
+                .FirstOrDefaultAsync(i => i.Id == id && i.UserId == userId);
+
+            if (item == null)
+            {
+                return NotFound();
+            }
+
+            // Update properties (only if provided)
+            if (!string.IsNullOrWhiteSpace(dto.Entry))
+            {
+                item.Entry = dto.Entry;
+            }
+
+            item.isCompleted = dto.IsCompleted;
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+        // POST
         [HttpPost]
         public async Task<ActionResult<User>> CreateUser(User user)
         {
