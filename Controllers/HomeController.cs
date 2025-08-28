@@ -1,4 +1,5 @@
 //using System.Diagnostics;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using todo_app_asp_core.Models;
 using todo_app_asp_core.Dtos;
@@ -50,6 +51,30 @@ namespace todo_app_asp_core.Controllers
             return item;
         }
 
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteItem(int id)
+        {
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (!int.TryParse(userIdClaim, out var userId))
+            {
+                return Unauthorized();
+            }
+
+            var item = await _context.Items
+                .FirstOrDefaultAsync(i => i.Id == id && i.UserId == userId);
+
+            if (item == null)
+            {
+                return NotFound(); // or Forbid() if you want to distinguish ownership
+            }
+
+            _context.Items.Remove(item);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
         // POST: api/authors
         [HttpPost]
         public async Task<ActionResult<User>> CreateUser(User user)
@@ -59,24 +84,6 @@ namespace todo_app_asp_core.Controllers
             return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
         }
 
-        // POST: api/authors/5/books
-        //[HttpPost("{Id}/items")]
-        //public async Task<ActionResult<TodoItem>> AddItemToUser(int userId, TodoItem item)
-        //{
-        //    var user = await _context.Users.FindAsync(userId);
-        //    if (user == null)
-        //        return NotFound();
-
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-        //    item.UserId = userId;
-        //    _context.Items.Add(item);
-        //    await _context.SaveChangesAsync();
-
-        //    return CreatedAtAction(nameof(GetItem), new { id = userId }, item);
-        //}
         [HttpPost("{userId}/items")]
         public async Task<ActionResult<TodoItem>> AddItemToUser(int userId, TodoItemCreateDto dto)
         {
